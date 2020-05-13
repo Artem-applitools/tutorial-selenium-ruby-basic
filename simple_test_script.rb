@@ -23,13 +23,13 @@ begin
   # but then change the above URL to https://demo.applitools.com/index_v2.html (for the 2nd run)
 
   # check the login page
-  eyes.check_window('Login window')
+  eyes.check('Login window', Applitools::Selenium::Target.window.fully)
 
   # Click the 'Log In' button
   driver.find_element(:id, 'log-in').click
 
   # Check the app page
-  eyes.check_window('App window')
+  eyes.check('App window', Applitools::Selenium::Target.window.fully)
   eyes.close_async
 rescue => e
   puts e.message
