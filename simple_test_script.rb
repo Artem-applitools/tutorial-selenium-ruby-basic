@@ -1,43 +1,61 @@
 require 'eyes_selenium'
 
-runner = Applitools::ClassicRunner.new
-eyes = Applitools::Selenium::Eyes.new(runner: runner)
+# Create a new chrome web driver
 web_driver = Selenium::WebDriver.for :chrome
 
-eyes.batch = Applitools::BatchInfo.new("Demo Batch")
+# Initialize the Runner for your test.
+runner = Applitools::ClassicRunner.new
 
+# Initialize the eyes SDK
+eyes = Applitools::Selenium::Eyes.new(runner: runner)
+
+#  Initialize the eyes configuration.
 eyes.configure do |conf|
-  conf.app_name = 'Demo App'
-  conf.test_name = 'Smoke Test'
-  conf.viewport_size = Applitools::RectangleSize.new(800, 600)
+  # Add this configuration if your tested page includes fixed elements.
+  # conf.stitch_mode = Applitools::STITCH_MODE[:css]
+  # You can get your api key from the Applitools dashboard
+  conf.api_key = 'APPLITOOLS_API_KEY'
+  # set new batch
+  conf.batch = Applitools::BatchInfo.new("Demo Batch")
 end
 
 begin
-  # Call Open on eyes to initialize a test session
-  driver = eyes.open(driver: web_driver)
+   # Set AUT's name, test name and viewport size (width X height)
+   # We have set it to 800 x 600 to accommodate various screens. Feel free to
+   # change it.
+  driver = eyes.open(driver: web_driver, app_name: 'Demo App', test_name: 'Smoke Test', viewport_size: Applitools::RectangleSize.new(800, 600))
 
   # Navigate to the url we want to test
   driver.get('https://demo.applitools.com')
 
-  # Note to see visual bugs, run the test using the above URL for the 1st run.
+  # To see visual bugs after the first run, use the commented line below instead.
   # but then change the above URL to https://demo.applitools.com/index_v2.html (for the 2nd run)
 
-  # check the login page
+  # Visual checkpoint #1 - Check the login page. using the fluent API
+  # https://applitools.com/docs/topics/sdk/the-eyes-sdk-check-fluent-api.html?Highlight=fluent%20api
   eyes.check('Login window', Applitools::Selenium::Target.window.fully)
 
   # Click the 'Log In' button
   driver.find_element(:id, 'log-in').click
 
-  # Check the app page
+  # Visual checkpoint #2 - Check the app page.
   eyes.check('App window', Applitools::Selenium::Target.window.fully)
+
+  # End the test.
   eyes.close_async
 rescue => e
   puts e.message
+  # If the test was aborted before eyes.close was called, ends the test as
+  # aborted.
   eyes.abort_if_not_closed
 ensure
   # Close the browser
   driver.quit
-  # Get and print all test results
+
+  #  Wait and collect all test results
+  #  we pass false to this method to suppress the exception that is thrown if we
+  #  find visual differences
+  # Print results
   puts runner.get_all_test_results
 end
 

@@ -16,6 +16,8 @@
 4. Obtain your API_KEY:
     * Login to Applitools > Click on the Person icon > My API Key
 5. Export the API_KEY: 
-    * For Mac, Linux: `export APPLITOOLS_API_KEY=MY_API_KEY`
-    * For Windows: `SET APPLITOOLS_API_KEY=MY_API_KEY`
+    * Don't forget to change the example with your own API key
+    * Set the environment variable which would be used in the test: 
+         * For Mac, Linux: `export APPLITOOLS_API_KEY=MY_API_KEY`
+         * For Windows: `SET APPLITOOLS_API_KEY=MY_API_KEY`
 6. Run the test: `bundle exec ruby simple_test_script.rb`
