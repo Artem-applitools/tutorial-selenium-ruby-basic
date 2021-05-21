@@ -1,5 +1,7 @@
 require 'eyes_selenium'
 
+options = Selenium::WebDriver::Chrome::Options.new
+options.add_argument('--headless') if ENV['CI'] == 'true'
 # Create a new chrome web driver
 web_driver = Selenium::WebDriver.for :chrome
 
@@ -14,7 +16,7 @@ eyes.configure do |conf|
   # Add this configuration if your tested page includes fixed elements.
   # conf.stitch_mode = Applitools::STITCH_MODE[:css]
   # You can get your api key from the Applitools dashboard
-  conf.api_key = 'APPLITOOLS_API_KEY'
+  conf.api_key = ENV['APPLITOOLS_API_KEY']
   # set new batch
   conf.batch = Applitools::BatchInfo.new("Demo Batch")
 end
@@ -52,11 +54,8 @@ ensure
   # Close the browser
   driver.quit
 
-  #  Wait and collect all test results
-  #  we pass false to this method to suppress the exception that is thrown if we
-  #  find visual differences
   # Print results
-  puts runner.get_all_test_results
+  puts runner.get_all_test_results(true)
 end
 
 
